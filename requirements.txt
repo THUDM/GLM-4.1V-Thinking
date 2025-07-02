@@ -1,4 +1,4 @@
-torch>=2.7.1
+torch>=2.7.0
 gradio>=5.35.0
 pre-commit>=4.2.0
 PyMuPDF>=1.26.1
@@ -6,3 +6,6 @@ av>=14.4.0
 accelerate>=1.6.0
 git+https://github.com/huggingface/transformers.git
 git+https://github.com/vllm-project/vllm.git
+spaces
+
+#gradio[mcp]
