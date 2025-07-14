@@ -1,0 +1,34 @@
+# https://github.com/astral-sh/ruff/issues/8627
+exclude = [".git", ".mypy_cache", ".ruff_cache", ".venv", "dist"]
+target-version = "py310"
+line-length = 120
+indent-width = 4
+
+
+[lint]
+select = [
+  "ARG",
+  "B",
+  "E",
+  "EM",
+  "F",
+  "FBT",
+  "INP",
+  "Q",
+  "RET",
+  "S",
+  "TID",
+  "TRY",
+]
+preview = false
+ignore = ["FBT001", "FBT002"]
+
+
+[lint.pycodestyle]
+ignore-overlong-task-comments = true
+
+
+[format]
+line-ending = "lf"
+quote-style = "double"
+indent-style = "space"

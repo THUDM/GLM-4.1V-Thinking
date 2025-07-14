@@ -1,0 +1,31 @@
+reward_log_dir: "logs/reward_judge"
+datasource_reward_config_mapping:
+  default: "math_verifier_config"
+  math: "math_verifier_config"
+
+reward_configs:
+  math_verifier_config:
+    verifier_type: "math"
+    sympy_tolerance: 1.0e-6
+    strict_boxed_extraction: true
+    enable_llm_judge_fallback: true
+    llm_api_key:
+      - YOUR_API_KEY
+    llm_judge_url:
+      - "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+    llm_model:
+      - glm-4-flash
+    llm_max_tokens: 10
+    llm_temperature: 0.01
+    llm_top_p: 0.01
+    llm_judge_prompt_template: |
+      You should give a score 0 or 1, where 1 means the generated response is perfectly correct and 0 means the generated response is wrong or partially wrong.
+
+      **Scoring rules:**
+
+      - 1.0: The response exactly matches the ground truth in content, value, or meaning (allowing for trivial algebraic or formatting differences).
+      - 0.0: The response is incorrect, incomplete, partially wrong, fails to convey the same mathematical or factual meaning, or is only a partial solution.
+      Respond with only 1.0 or 0.0. Do not include a rationale.
+      Question: {question}
+      Response: {predict}
+      Ground Truth: {label}
