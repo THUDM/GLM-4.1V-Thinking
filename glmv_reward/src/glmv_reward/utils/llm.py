@@ -4,7 +4,6 @@
 import json
 from typing import Optional, cast
 
-import numpy as np
 import requests
 
 from .logging import get_logger
@@ -82,33 +81,3 @@ def post_query_llm(
             return cast(str, content)
         _logger.error("Unexpected response format from Zhipu AI API: %s", response_data)
         return ""
-
-
-def _apply_chat_template_qwen(user: str, assistant: str, box_prompt: bool = True) -> str:
-    if box_prompt:
-        system_prompt = (
-            "Please reason step by step, and put your final answer within <|begin_of_box|>...<|end_of_box|>."
-        )
-    else:
-        system_prompt = "Please reason step by step, and output your final answer."
-
-    return (
-        f"<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{user}<|im_end|>\n"
-        f"<|im_start|>assistant\n{assistant}<|im_end|>"
-    )
-
-
-def query_rm(url: str, model: str, prompt: str, response: str, box_prompt: bool = True, timeout: int = 120) -> float:
-    prompt = _apply_chat_template_qwen(prompt, response, box_prompt)
-    data = {"model": model, "text": [prompt]}
-    responses = requests.post(url, json=data, timeout=timeout).json()
-    return cast(float, responses[0]["embedding"][0])
-
-
-def query_rm_mean(
-    url: str, model: str, prompt: str, response: str, num_query: int = 1, box_prompt: bool = True, timeout: int = 120
-) -> float:
-    rewards = []
-    for _ in range(num_query):
-        rewards.append(query_rm(url, model, prompt, response, box_prompt, timeout))
-    return np.mean(rewards).item()

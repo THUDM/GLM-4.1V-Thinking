@@ -118,49 +118,42 @@ def find_boxed_content(text: str, begin_token: str = _BEGIN_OF_BOX, end_token: s
 
 def detect_long_paragraph_mixing(text: str, min_chinese_chars: int = 50, min_english_words: int = 200) -> bool:
     """
-    检测文本中是否同时存在较长的中文段落和英文段落
-    :param text: 输入文本
-    :param min_chinese_chars: 中文段落最小字符数阈值
-    :param min_english_words: 英文段落最小单词数阈值
-    :return: bool (True表示存在长段混杂)
+    Detect whether text contains both long Chinese paragraphs and long English paragraphs.
+    
+    Args:
+        text: Input text to analyze
+        min_chinese_chars: Minimum character count threshold for Chinese paragraphs
+        min_english_words: Minimum word count threshold for English paragraphs
+        
+    Returns:
+        bool: True if long paragraph mixing is detected
     """
-    # 1. 按段落分割文本
     paragraphs = [p.strip() for p in re.split(r"\n{2,}", text) if p.strip()]
 
-    # 2. 检测标志
     has_long_chinese = False
     has_long_english = False
 
-    # 3. 段落分析
     for para in paragraphs:
-        # 跳过空段落
         if len(para) == 0:
             continue
 
-        # 统计中文字符数 (Unicode 4E00-9FFF)
         chinese_chars = re.findall(r"[\u4e00-\u9fff]", para)
         chinese_count = len(chinese_chars)
 
-        # 统计英文单词 (至少2个字母的连续序列)
         english_words = re.findall(r"\b[a-zA-Z]{2,}\b", para)
         english_count = len(english_words)
 
-        # 计算段落总字符数 (用于比例计算)
         total_chars = len(para)
 
-        # 判断中文段落 (中文字符占80%以上且达到最小长度)
         if chinese_count >= min_chinese_chars and chinese_count / total_chars > 0.8:
             has_long_chinese = True
 
-        # 判断英文段落 (英文单词占70%以上且达到最小长度)
         if english_count >= min_english_words and english_count / (len(para.split()) + 1e-5) > 0.7:
             has_long_english = True
 
-        # 如果已检测到两种长段落，提前返回
         if has_long_chinese and has_long_english:
             return True
 
-    # 4. 最终判定
     return has_long_chinese and has_long_english
 
 

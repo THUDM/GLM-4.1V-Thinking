@@ -260,7 +260,6 @@ class RewardSystem(object):
         verifier = get_verifier_from_config(reward_config, datasource)
 
         if verifier.is_batch_verifier:
-            # 批处理验证器处理
             # ! mypy issue, invalid signature and return type
             batch_rewards = verifier.judge(
                 prompts=prompt_lst, answers=answer_lst, gt_answers=gt_answer_lst, image_files=image_file_lst

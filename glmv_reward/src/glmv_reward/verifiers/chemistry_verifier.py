@@ -15,7 +15,6 @@ _logger = get_logger(__name__)
 
 
 def _has_unit(text: str) -> bool:
-    # 可以根据实际情况扩展单位列表
     units = [
         "mol",
         "L",
@@ -79,11 +78,9 @@ class ChemistryVerifier(MathVerifier):
             )
             return self.min_reward
 
-        # 新增：只要有单位，直接 LLM 判别
         if _has_unit(extracted_answer) or _has_unit(ground_truth):
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
-        # 否则走 sympy 判别
         try:
             from sympy import Basic, sympify
 
@@ -100,7 +97,6 @@ class ChemistryVerifier(MathVerifier):
                     return 1.0
                 return self.min_reward
 
-        # 兜底
         if self.enable_llm_judge_fallback:
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
@@ -160,13 +156,10 @@ class ChemistryVerifier(MathVerifier):
 
                 if response_json:
                     content = response_json.strip()
-                    # 使用正则表达式查找所有 "1.0" 和 "0.0"
 
                     score_matches = re.findall(r"(?:1\.0|0\.0|(?<!\.)1(?!\.)|(?<!\.)0(?!\.))", content)
                     if score_matches:
-                        last_score = score_matches[-1]  # 取最后一个匹配项(这里飞书不加占位符会渲染成 [-1]
-                        # print(f"content: {content}")
-                        # print(f"last_score: {last_score}")
+                        last_score = score_matches[-1]
                         if last_score == "1.0":
                             reward_score += 1.0
                             continue

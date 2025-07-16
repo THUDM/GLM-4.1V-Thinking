@@ -11,7 +11,7 @@ It simulates a rollout scenario where we have:
 
 Prerequisites:
 1. Set ZHIPUAI_API_KEY environment variable.
-2. Install the vlm-reward-system package.
+2. Install the glmv-reward package.
 3. Copy the template configuration file and fill in your api key.
 Usage:
     python examples/reward_system_demo.py
@@ -72,18 +72,18 @@ def main() -> None:
 
     # Simulate model response generation (this represents your policy model's output)
     prompt = f"""
-Please solve the following math problem step by step.
-Provide your reasoning in <think> tags and your final answer in <answer> tags with the result inside <|begin_of_box|> and <|end_of_box|> tags.
+        Please solve the following math problem step by step.
+        Provide your reasoning in <think> tags and your final answer in <answer> tags with the result inside <|begin_of_box|> and <|end_of_box|> tags.
 
-Example format:
-<think>
-Let me work through this step by step...
-</think>
-<answer>
-<|begin_of_box|>42<|end_of_box|>
-</answer>
+        Example format:
+        <think>
+        Let me work through this step by step...
+        </think>
+        <answer>
+        <|begin_of_box|>42<|end_of_box|>
+        </answer>
 
-Question: {question}
+        Question: {question}
 """.strip()  # noqa: E501
 
     try:

@@ -70,7 +70,6 @@ class BiologyVerifier(MathVerifier):
         if debug:
             breakpoint()
 
-        # 生物学答案主要是字符串
         if not isinstance(extracted_answer, str) or not isinstance(ground_truth, str):
             _logger.warning(
                 "%s: Judge expects string inputs, but got `%s` and `%s`.",
@@ -80,21 +79,12 @@ class BiologyVerifier(MathVerifier):
             )
             return self.min_reward
 
-        # 规则 1: 简单的字符串完全匹配（忽略首尾空格）
         if extracted_answer.strip() == ground_truth.strip():
             return 1.0
 
-        # # 规则 2: 尝试作为基因型进行标准化比较
-        # norm_extracted = self._normalize_genotype(extracted_answer)
-        # norm_gt = self._normalize_genotype(ground_truth)
-        # if norm_extracted is not None and norm_extracted == norm_gt:
-        #     return 1.0
-
-        # 兜底逻辑：对于其他所有情况（如概念解释、过程描述、术语列表等），
         if self.enable_llm_judge_fallback:
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
-        # 如果 LLM fallback 未启用或配置不全，则返回 0.0
         return self.min_reward
 
     def _llm_judge_fallback(

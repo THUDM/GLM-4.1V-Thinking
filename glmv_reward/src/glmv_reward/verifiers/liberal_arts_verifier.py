@@ -23,11 +23,7 @@ def _preprocess_text(text: str) -> str:
     if not isinstance(text, str):
         return ""
 
-    # 移除首尾空格
     processed_text = text.strip()
-
-    # 将多个空格或换行符替换为单个空格
-    # processed_text = re.sub(r'\s+', ' ', processed_text)
 
     return processed_text.strip()
 
@@ -63,25 +59,18 @@ class LiberalArtsVerifier(MathVerifier):
             )
             return self.min_reward
 
-        # 规则 1: 简单的字符串完全匹配（最快、最可靠的检查）
         if extracted_answer.strip() == ground_truth.strip():
             return 1.0
 
-        # 对于文科综合，几乎所有非完全匹配的情况都需要复杂的语义理解。
-        # 因此，我们直接进入 LLM 判断流程，而不是添加脆弱的规则。
-
         if self.enable_llm_judge_fallback:
-            # 在送入 LLM 前，对答案进行预处理，帮助模型聚焦核心内容
             processed_extracted = _preprocess_text(extracted_answer)
             processed_gt = _preprocess_text(ground_truth)
 
-            # 如果预处理后为空，则认为无有效内容
             if not processed_extracted or not processed_gt:
                 return self.min_reward
 
             return self._llm_judge_fallback(processed_extracted, processed_gt, question, image_file)
 
-        # 如果没有启用 LLM，对于非完全匹配的情况，只能判为错误
         return 0.0
 
     def _llm_judge_fallback(

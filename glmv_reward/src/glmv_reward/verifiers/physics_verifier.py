@@ -15,7 +15,6 @@ _logger = get_logger(__name__)
 
 
 def _has_unit(text: str) -> bool:
-    # 可以根据实际情况扩展单位列表
     units = [
         "kg",
         "g",
@@ -73,11 +72,9 @@ class PhysicsVerifier(MathVerifier):
             )
             return self.min_reward
 
-        # 新增：只要有单位，直接 LLM 判别
         if _has_unit(extracted_answer) or _has_unit(ground_truth):
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
-        # 否则走 sympy 判别
         try:
             from sympy import Basic, sympify
 
@@ -94,7 +91,6 @@ class PhysicsVerifier(MathVerifier):
                     return 1.0
                 return 0.0
 
-        # 兜底
         if self.enable_llm_judge_fallback:
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
@@ -115,7 +111,6 @@ class PhysicsVerifier(MathVerifier):
             raise ValueError(err_msg)
 
         verifier_template = self.llm_judge_prompt_template or ""
-        # Ensure template is a valid non-empty string
         if len(verifier_template.strip()) == 0:
             return self.min_reward
 

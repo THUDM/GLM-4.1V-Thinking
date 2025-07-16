@@ -25,17 +25,12 @@ def _normalize_list(text: str) -> Optional[set[str]]:
     if not isinstance(text, str) or not text.strip():
         return None
 
-    # 使用正则表达式匹配中英文逗号、分号、顿号以及空格作为分隔符
     delimiters = r"[,;\s、，；]"
-    # 分割、去除首尾空格、过滤掉空字符串
     items = {item.strip() for item in re.split(delimiters, text) if item.strip()}
 
-    # 如果分割后只有一个元素，可能它不是一个列表，除非它就是答案本身
-    # 为避免误判，只有当分割出多个元素时，我们才确信它是一个列表
     if len(items) > 1:
         return items
 
-    # 如果只有一个元素，也返回，以便在 judge 逻辑中进行单元素集合比较
     if len(items) == 1:
         return items
 
@@ -74,18 +69,15 @@ class GeographyVerifier(MathVerifier):
             )
             return self.min_reward
 
-        # 规则 1: 简单的字符串完全匹配
         if extracted_answer.strip().lower() == ground_truth.strip().lower():
             return 1.0
 
-        # 规则 2: 尝试作为无序列表进行比较
         list_extracted = _normalize_list(extracted_answer)
         list_gt = _normalize_list(ground_truth)
         if list_extracted is not None and list_gt is not None:
             if list_extracted == list_gt:
                 return 1.0
 
-        # 规则 3: 尝试作为纯数字进行比较 (复用 MathVerifier 的逻辑)
         try:
             from sympy import Basic, sympify
 
@@ -101,7 +93,6 @@ class GeographyVerifier(MathVerifier):
                 ):
                     return 1.0
 
-        # 兜底逻辑: 对于其他所有情况，尤其是概念、成因、地点名称等，使用 LLM 判断
         if self.enable_llm_judge_fallback:
             return self._llm_judge_fallback(extracted_answer, ground_truth, question, image_file)
 
@@ -122,16 +113,13 @@ class GeographyVerifier(MathVerifier):
             raise ValueError(err_msg)
 
         verifier_template = self.llm_judge_prompt_template or ""
-        # Ensure template is a valid non-empty string
         if len(verifier_template.strip()) == 0:
             return self.min_reward
 
-        # Ensure all required placeholders exist before formatting
         if not all(k in verifier_template for k in ("{question}", "{predict}", "{label}")):
             err_msg = "Template missing required placeholders: {question}, {predict}, {label}"
             raise ValueError(err_msg)
 
-        # Protect any unintended format tokens before applying .format()
         verifier_template = protect_template(verifier_template, allowed=("question", "predict", "label"))
 
         try:

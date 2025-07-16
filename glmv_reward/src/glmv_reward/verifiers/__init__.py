@@ -16,11 +16,9 @@ from .biology_verifier import BiologyVerifier
 from .chart_verifier import ChartVerifier
 from .chemistry_verifier import ChemistryVerifier
 from .counting_verifier import CountingVerifier
-from .fluency_verifier import FluencyVerifier
 from .general_verifier import GeneralVerifier
 from .geography_verifier import GeographyVerifier
 from .geoquest_verifier import GeoQuestVerifier
-from .instruct_verifier import InstructVerifier
 from .language_mix_verifier import LanguageMixVerifier
 from .liberal_arts_verifier import LiberalArtsVerifier
 from .math_verifier import MathVerifier
@@ -28,7 +26,6 @@ from .mmsi_verifier import MmsiVerifier
 from .multi_image_verifier import MultiImageVerifier
 from .ocr_verifier import OCRVerifier
 from .physics_verifier import PhysicsVerifier
-from .post_rl_format_verifier import PostRLFormatVerifier
 from .vqa_verifier import VQAVerifier
 
 _VERIFIER_REGISTRY: dict[str, type[Verifier]] = {
@@ -36,11 +33,9 @@ _VERIFIER_REGISTRY: dict[str, type[Verifier]] = {
     "chart": ChartVerifier,
     "chemistry": ChemistryVerifier,
     "counting": CountingVerifier,
-    "fluency": FluencyVerifier,
     "general": GeneralVerifier,
     "geography": GeographyVerifier,
     "geoquest": GeoQuestVerifier,
-    "instruct": InstructVerifier,
     "language_mix": LanguageMixVerifier,
     "liberal_arts": LiberalArtsVerifier,
     "math": MathVerifier,
@@ -48,7 +43,6 @@ _VERIFIER_REGISTRY: dict[str, type[Verifier]] = {
     "multi_image": MultiImageVerifier,
     "ocr": OCRVerifier,
     "physics": PhysicsVerifier,
-    "post_rl_format": PostRLFormatVerifier,
     "vqa": VQAVerifier,
 }
 _VERIFIER_INSTANCE_REGISTRY: dict[str, Verifier] = {}

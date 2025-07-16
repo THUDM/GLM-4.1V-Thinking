@@ -1,7 +1,6 @@
 [project]
 version = "0.1.0"
 name = "glmv_reward"
-# dynamic = ["version"]
 description = "A reward system for VLM"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -18,11 +17,7 @@ dependencies = [
 
 
 [build-system]
-requires = [
-  "hatchling",
-  # * uses vcs (e.g. git) to determine the package version
-  # "hatch-vcs",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 
@@ -34,19 +29,6 @@ dev = [
   "types-editdistance~=0.8.0",
   "types-requests~=2.32",
 ]
-
-
-[tool.hatch.version]
-source = "vcs"
-
-
-# [tool.hatch.version.raw-options]
-# version_scheme = "python-simplified-semver"
-# local_scheme = "no-local-version"
-
-
-# [tool.hatch.build.hooks.vcs]
-# version-file = "src/glmv_reward/_version.py"
 
 
 [tool.mypy]
@@ -64,10 +46,8 @@ follow_untyped_imports = true
 # * uses `poe` to run lint, typecheck tasks
 # * see: https://github.com/astral-sh/uv/issues/5903
 [tool.poe.tasks.lint]
-# TODO: adds "tests" dir
 cmd = "ruff check src/glmv_reward examples/reward_system_demo.py"
 
 
 [tool.poe.tasks.typecheck]
-# TODO: adds "tests" dir
 cmd = "mypy src/glmv_reward examples/reward_system_demo.py"

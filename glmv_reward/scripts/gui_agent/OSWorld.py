@@ -99,11 +99,9 @@ def calculate_coordinate_similarity(coord1: List[int], coord2: List[int], tolera
         return 0.0
     distance = ((coord1[0] - coord2[0]) ** 2 +
                 (coord1[1] - coord2[1]) ** 2) ** 0.5
-    # 如果距离在容忍范围内，给予高分
     if distance <= tolerance:
         return 1.0 - (distance / tolerance) * 0.2
     else:
-        # 距离超出容忍范围，分数快速衰减
         return max(0.0, 1.0 - (distance / 50))
 
 
@@ -145,7 +143,6 @@ def calculate_text_similarity(s1: str, s2: str) -> float:
     s1_norm = s1.strip().lower()
     s2_norm = s2.strip().lower()
 
-    # 1. 长度相似度检查（防止长度差异过大）
     len1, len2 = len(s1_norm), len(s2_norm)
     if len1 == 0 or len2 == 0:
         return 0.0
@@ -155,7 +152,6 @@ def calculate_text_similarity(s1: str, s2: str) -> float:
     else:
         length_penalty = 1.0
     
-    # 2. 检测重复模式（防hack）
     def has_excessive_repetition(text, threshold=0.7):
         if len(text) < 10:
             return False
@@ -182,7 +178,6 @@ def calculate_text_similarity(s1: str, s2: str) -> float:
     if has_excessive_repetition(s1_norm) or has_excessive_repetition(s2_norm):
         repetition_penalty = 0.3
     
-    # 3. 综合多种相似度
     edit_sim = _edit_distance_similarity(s1_norm, s2_norm)
     jaccard_sim = _jaccard_similarity(s1_norm, s2_norm)
     combined_sim = 0.6 * edit_sim + 0.4 * jaccard_sim

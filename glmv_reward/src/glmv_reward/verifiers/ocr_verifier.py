@@ -34,12 +34,11 @@ class OCRVerifier(Verifier):
         llm_top_p: float = 1.0,
     ) -> None:
         self.strict_boxed = strict_boxed_extraction
-        # >= upper bound，分数将被置为 1.0
+        # >= upper bound, score will be 1.0
         self.edit_distance_upper_bound = edit_distance_upper_bound
-        # <= lower bound，分数将被置为 0.0
+        # <= lower bound, score will be 0.0
         self.edit_distance_lower_bound = edit_distance_lower_bound
         self.ignore_case = ignore_case
-        # LLM fallback 相关配置
         self.enable_llm_judge_fallback = enable_llm_judge_fallback
         self.llm_api_key = llm_api_key
         self.llm_judge_url = llm_judge_url
@@ -104,21 +103,18 @@ class OCRVerifier(Verifier):
             extracted_answer = extracted_answer.lower()
             ground_truth = ground_truth.lower()
 
-        # 去除换行符和空格
         extracted_answer = extracted_answer.strip().replace("\n", " ").replace(" ", "")
         ground_truth = ground_truth.strip().replace("\n", " ").replace(" ", "")
 
-        # 基于编辑距离计算 extracted_answer 和 ground_truth 的相似度
         similarity = 1 - editdistance.eval(extracted_answer, ground_truth) / max(
             len(extracted_answer), len(ground_truth)
         )
 
-        # 如果相似度很高，直接返回
         if similarity >= self.edit_distance_upper_bound:
             return 1.0
         if similarity <= self.edit_distance_lower_bound:
             return 0.0
-        # LLM fallback
+
         if (
             self.enable_llm_judge_fallback
             and self.llm_api_key
@@ -151,16 +147,13 @@ class OCRVerifier(Verifier):
 
         verifier_template = self.llm_judge_prompt_template or ""
 
-        # Ensure template is a valid non-empty string
         if len(verifier_template.strip()) == 0:
             return self.min_reward
 
-        # Ensure all required placeholders exist before formatting
         if not all(k in verifier_template for k in ("{question}", "{predict}", "{label}")):
             err_msg = "Template missing required placeholders: {question}, {predict}, {label}"
             raise ValueError(err_msg)
 
-        # Protect any unintended format tokens before applying .format()
         verifier_template = protect_template(verifier_template, allowed=("question", "predict", "label"))
         try:
             prompt = verifier_template.format(question=question or "", predict=extracted_answer, label=ground_truth)
@@ -195,7 +188,7 @@ class OCRVerifier(Verifier):
                     if "0.0" in content:
                         continue
                     try:
-                        reward_score += float(content)  # LLM 直接返回数字
+                        reward_score += float(content)
                         continue
                     except ValueError:
                         pass
@@ -207,5 +200,4 @@ class OCRVerifier(Verifier):
                     response_json,
                 )
 
-            # at least > half of the reward_url_list return 1.0
             return float(reward_score > len(reward_url_lst) / 2)
