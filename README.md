@@ -8,6 +8,8 @@
 <p align="center">
     👋 Join our <a href="resources/WECHAT.md" target="_blank">WeChat</a> and <a href="https://discord.com/invite/8cnQKdAprg" target="_blank">Discord</a> communities.
     <br>
+    🤗 Download on <a href="https://huggingface.co/zai-org/GLM-4.5V" target="_blank">Hugging Face</a>.
+    <br>
     📖 Check out the <a href="resources/GLM-4.5V_technical_report.pdf" target="_blank">paper</a>.
     <br>
     📍 Try <a href="https://chat.z.ai/" target="_blank">online</a> or use the <a href="https://docs.z.ai/guides/vlm/glm-4.5v" target="_blank">API</a>.
